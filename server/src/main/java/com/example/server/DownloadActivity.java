@@ -4,9 +4,13 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -42,7 +46,11 @@ public class DownloadActivity extends AppCompatActivity {
                 Log.i(CLASSNAME, "onClick");
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (checkPermission()){
-                        beginDownload("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
+                        // https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4
+                        // https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4
+                        // https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4
+                        // beginDownload("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
+                        beginDownload("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4");
                     } else {
                         requestPermission();
                     }
@@ -54,29 +62,62 @@ public class DownloadActivity extends AppCompatActivity {
         });
     }
 
-    private void beginDownload(String file_link){
-        File file=new File(getExternalFilesDir(null),"Dummy");
+    private void beginDownload(String fileHttpUrl){
+        String fileName = new File("" + Uri.parse(fileHttpUrl)).getName();
+        Log.i(CLASSNAME, "beginDownload() - file url argument : " + fileHttpUrl);
+        Log.i(CLASSNAME, "beginDownload() - file name : " + fileName);
 
-        checkPermission();
+        File file = new File(getExternalFilesDir(null),fileName);
 
-        Log.i(CLASSNAME, file_link);
+        if(file.exists()) {
+            /*
+            Log.i(CLASSNAME, "beginDownload() - File on path " + fileName + " already exists.");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+            // Add the buttons
+            // builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                }
+            });
+            //builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            */
+
+            FragmentManager fm = getSupportFragmentManager();
+
+            //EditNameDialogFragment editNameDialogFragment = EditNameDialogFragment.newInstance("Some Title");
+
+            //editNameDialogFragment.show(fm, "fragment_edit_name")
+
+            // ExistingVideoDialogFragment existingVideoDialogFragment = new ExistingVideoDialogFragment();
+            ExistingVideoDialogFragment existingVideoDialogFragment = ExistingVideoDialogFragment.newInstance("Some Title");
+            existingVideoDialogFragment.show(fm, "dialog");
+        } else {
+            Log.i(CLASSNAME, "beginDownload() - File doesn't exists.");
+        }
         //now if download complete file not visible now lets show it
         DownloadManager.Request request=null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            request=new DownloadManager.Request(Uri.parse(file_link))
-                    .setTitle("Dummy")
+            request = new DownloadManager.Request(Uri.parse(fileHttpUrl))
+                    .setTitle(fileName)
                     .setDescription("Downloading")
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                     .setDestinationUri(Uri.fromFile(file))
                     .setRequiresCharging(false)
                     .setAllowedOverMetered(true)
                     .setAllowedOverRoaming(true);
-            Log.i(CLASSNAME,"IF : "+Uri.fromFile(file).toString());
-            Log.i(CLASSNAME,"IF");
+            Log.i(CLASSNAME,"beginDownload() - " + Uri.fromFile(file).toString());
         }
         else{
-            request=new DownloadManager.Request(Uri.parse(file_link))
-                    .setTitle("Dummy")
+            request = new DownloadManager.Request(Uri.parse(fileHttpUrl))
+                    .setTitle(fileName)
                     .setDescription("Downloading")
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                     .setDestinationUri(Uri.fromFile(file))
@@ -93,11 +134,16 @@ public class DownloadActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             long id=intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,-1);
             if(downloadId==id){
+
                 Toast.makeText(DownloadActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
                 Log.i(CLASSNAME, "getExternalStorageState : " + Environment.getExternalStorageState() );
             }
         }
     };
+
+    public void test() {
+        Log.i(CLASSNAME,"AAAAAAAAAAAAAAAAAAA");
+    }
     //void updateFromDownload(T result);
     @Override
     protected void onDestroy() {
@@ -108,10 +154,10 @@ public class DownloadActivity extends AppCompatActivity {
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(DownloadActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (result == PackageManager.PERMISSION_GRANTED) {
-            Log.i(CLASSNAME, "CheckPermission true");
+            Log.i(CLASSNAME, "CheckPermission() - PERMISSION_GRANTED");
             return true;
         } else {
-            Log.i(CLASSNAME, "CheckPermission False");
+            Log.i(CLASSNAME, "CheckPermission() - PERMISSION_NOT_GRANTED");
             return false;
         }
     }
