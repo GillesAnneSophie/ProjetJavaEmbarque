@@ -1,14 +1,14 @@
-package com.example.server;
+package com.example.projetjavaembarque;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class DownloadActivity extends AppCompatActivity {
+public class VideoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_download);
+        setContentView(R.layout.activity_video);
     }
 }
