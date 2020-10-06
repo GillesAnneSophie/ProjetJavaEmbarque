@@ -31,6 +31,10 @@ public class DownloadActivity extends FragmentActivity implements DownloadCallba
     //ImageView imageView = (ImageView) findViewById(R.id.image_view);
     //imageView.setImageBitmap(bitmap);
 
+    // Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+    // ImageView imageView = (ImageView) findViewById(R.id.image_view);
+    // imageView.setImageBitmap(bitmap);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
