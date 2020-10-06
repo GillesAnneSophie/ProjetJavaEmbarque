@@ -18,16 +18,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickEventDownloadButton(View view){
         Intent launchActivityDownload = new Intent(MainActivity.this, DownloadActivity.class);
-
         startActivity(launchActivityDownload);
     }
     public void onClickEventShareButton(View view){
-        //Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        //discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-
         Intent launchActivityShare = new Intent(MainActivity.this, ShareActivity.class);
-
-        Intent[] intents = {/*discoverableIntent, */launchActivityShare};
-        startActivities(intents);
+        startActivity(launchActivityShare);
     }
 }
