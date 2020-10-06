@@ -16,6 +16,8 @@ import java.io.InputStream;
 
 // For Network connectivity, Activity should inherit from FramgmentActivity. Since AppCompatActivity inherit from FragmentActivity, it should be okay.
 public class DownloadActivity extends FragmentActivity implements DownloadCallback {
+    private final static String CLASSNAME = DownloadActivity.class.getSimpleName();
+
     // Keep a reference to the NetworkFragment, which owns the AsyncTask object
     // that is used to execute network ops.
     private NetworkFragment networkFragment;
@@ -40,14 +42,19 @@ public class DownloadActivity extends FragmentActivity implements DownloadCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
-        networkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://www.google.com");
+        //networkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://abhiandroid.com/ui/wp-content/uploads/2016/04/videoviewtestingvideo.mp4");
+        networkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
+
+        startDownload();
     }
 
     private void startDownload() {
         if (!downloading && networkFragment != null) {
             // Execute the async download.
             networkFragment.startDownload();
+            Log.wtf(CLASSNAME,"startDownload() - 1");
             downloading = true;
+            Log.wtf(CLASSNAME,"startDownload() - 2");
         }
     }
 
@@ -55,8 +62,8 @@ public class DownloadActivity extends FragmentActivity implements DownloadCallba
 
     @Override
     public void updateFromDownload(Object result) {
-        Log.wtf("WTF","FUCK");
-        updateFromDownload(result);
+        Log.wtf(CLASSNAME,"FUCK");
+        // updateFromDownload(result);
         // Update your UI here based on result of download.
     }
 
@@ -73,18 +80,23 @@ public class DownloadActivity extends FragmentActivity implements DownloadCallba
         switch(progressCode) {
             // You can add UI behavior for progress updates here.
             case Progress.ERROR:
+                Log.e(CLASSNAME,"ERROR");
             //...
                 break;
             case Progress.CONNECT_SUCCESS:
             //...
+                Log.i(CLASSNAME,"Progress.CONNECT_SUCCESS");
                 break;
             case Progress.GET_INPUT_STREAM_SUCCESS:
             //...
+                Log.i(CLASSNAME,"Progress.GET_INPUT_STREAM_SUCCESS");
                 break;
             case Progress.PROCESS_INPUT_STREAM_IN_PROGRESS:
+                Log.i(CLASSNAME,"Progress.PROCESS_INPUT_STREAM_IN_PROGRESS");
             //...
                 break;
             case Progress.PROCESS_INPUT_STREAM_SUCCESS:
+                Log.i(CLASSNAME,"Progress.PROCESS_INPUT_STREAM_SUCCESS");
             //...
                 break;
         }

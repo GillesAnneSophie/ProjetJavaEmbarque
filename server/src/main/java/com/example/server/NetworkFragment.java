@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,7 +24,7 @@ import javax.net.ssl.HttpsURLConnection;
  * Implementation of headless Fragment that runs an AsyncTask to fetch data from the network.
  */
 public class NetworkFragment extends Fragment {
-    public static final String TAG = "NetworkFragment";
+    public static final String CLASSNAME = NetworkFragment.class.getSimpleName();
 
     private static final String URL_KEY = "UrlKey";
 
@@ -51,14 +52,14 @@ public class NetworkFragment extends Fragment {
         // This is necessary because NetworkFragment might have a task that began running before
         // the config change occurred and has not finished yet.
         // The NetworkFragment is recoverable because it calls setRetainInstance(true).
-        NetworkFragment networkFragment = (NetworkFragment) fragmentManager
-                .findFragmentByTag(NetworkFragment.TAG);
+        Log.i(CLASSNAME, "GetInstance() - URL : "+url);
+        NetworkFragment networkFragment = (NetworkFragment) fragmentManager.findFragmentByTag(NetworkFragment.CLASSNAME);
         if (networkFragment == null) {
             networkFragment = new NetworkFragment();
             Bundle args = new Bundle();
             args.putString(URL_KEY, url);
             networkFragment.setArguments(args);
-            fragmentManager.beginTransaction().add(networkFragment, TAG).commit();
+            fragmentManager.beginTransaction().add(networkFragment, CLASSNAME).commit();
         }
         return networkFragment;
     }
@@ -68,6 +69,7 @@ public class NetworkFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         urlString = getArguments().getString(URL_KEY);
+        Log.i(CLASSNAME,"onCreate() - urlString : "+urlString);
         // ...
         setRetainInstance(true);
     }
@@ -99,7 +101,9 @@ public class NetworkFragment extends Fragment {
     public void startDownload() {
         cancelDownload();
         downloadTask = new DownloadTask(callback);
-        downloadTask.execute(urlString);
+        Log.i(CLASSNAME, "startDownload() - urlString : "+urlString);
+        //https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4
+        downloadTask.execute("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
     }
 
     /**
@@ -147,16 +151,20 @@ public class NetworkFragment extends Fragment {
          */
         @Override
         protected void onPreExecute() {
+            Log.i(CLASSNAME, "PreExecute() - 1");
             if (callback != null) {
+                Log.i(CLASSNAME, "PreExecute() - 2");
                 NetworkInfo networkInfo = callback.getActiveNetworkInfo();
                 if (networkInfo == null || !networkInfo.isConnected() ||
                         (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
                                 && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
                     // If no connectivity, cancel task and update Callback with null data.
                     callback.updateFromDownload(null);
+                    Log.i(CLASSNAME, "PreExecute() - 3");
                     cancel(true);
                 }
             }
+            Log.i(CLASSNAME, "PreExecute() - 4");
         }
 
         /**
@@ -165,20 +173,31 @@ public class NetworkFragment extends Fragment {
         @Override
         protected DownloadTask.Result doInBackground(String... urls) {
             Result result = null;
+            Log.i(CLASSNAME, "doInBackground() - Arg : "+urls.toString());
+            Log.i(CLASSNAME, "doInBackground() - Arg size : "+urls.length);
+            Log.i(CLASSNAME, "doInBackground() - 1");
             if (!isCancelled() && urls != null && urls.length > 0) {
                 String urlString = urls[0];
+
+                Log.i(CLASSNAME, "doInBackground() - 2");
                 try {
                     URL url = new URL(urlString);
+                    Log.i(CLASSNAME, "doInBackground() - url.toString() : " + url.toString());
                     String resultString = downloadUrl(url);
                     if (resultString != null) {
                         result = new Result(resultString);
+                        Log.i(CLASSNAME, "Response received.");
                     } else {
+                        Log.i(CLASSNAME, "No response received.");
                         throw new IOException("No response received.");
                     }
+                    Log.i(CLASSNAME, "doInBackground() - 3");
                 } catch(Exception e) {
                     result = new Result(e);
+                    Log.i(CLASSNAME, "doInBackground() - new Result(e) "+e.toString());
                 }
             }
+            Log.i(CLASSNAME, "doInBackground() - 4");
             return result;
         }
 
@@ -187,7 +206,9 @@ public class NetworkFragment extends Fragment {
          */
         @Override
         protected void onPostExecute(Result result) {
+            Log.i(CLASSNAME, "onPostExecute() - 1");
             if (result != null && callback != null) {
+                Log.i(CLASSNAME, "onPostExecute() - 2");
                 if (result.exception != null) {
                     callback.updateFromDownload(result.exception.getMessage());
                 } else if (result.resultValue != null) {
@@ -195,6 +216,7 @@ public class NetworkFragment extends Fragment {
                 }
                 callback.finishDownloading();
             }
+            Log.i(CLASSNAME, "onPostExecute() - 3");
         }
 
         /**
@@ -214,6 +236,7 @@ public class NetworkFragment extends Fragment {
             HttpsURLConnection connection = null;
             String result = null;
             try {
+                Log.i(CLASSNAME, "downloadUrl() - 1");
                 connection = (HttpsURLConnection) url.openConnection();
                 // Timeout for reading InputStream arbitrarily set to 3000ms.
                 connection.setReadTimeout(3000);
@@ -257,6 +280,7 @@ public class NetworkFragment extends Fragment {
     public String readStream(InputStream stream, int maxReadSize) throws IOException, UnsupportedEncodingException {
         // Reader reader = null;
         InputStreamReader reader = null;
+        Log.i(CLASSNAME, "readStream() - 1");
         reader = new InputStreamReader(stream, "UTF-8");
         char[] rawBuffer = new char[maxReadSize];
         int readSize;
@@ -268,6 +292,8 @@ public class NetworkFragment extends Fragment {
             buffer.append(rawBuffer, 0, readSize);
             maxReadSize -= readSize;
         }
+        Log.i(CLASSNAME, "readStream() - 2");
+        Log.i(CLASSNAME, buffer.toString());
         return buffer.toString();
     }
 }
