@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProjetJavaEmbarque</string>
+    <string name="app_name">client</string>
 
     <!-- activity_video -->
     <string name="video_connected_to_text">Connected to:</string>

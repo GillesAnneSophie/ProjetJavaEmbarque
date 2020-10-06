@@ -20,6 +20,7 @@
         android:id="@+id/connectButton"
         android:layout_width="409dp"
         android:layout_height="150dp"
+        android:onClick="onClickEventConnectButton"
         android:text="@string/connect_button"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

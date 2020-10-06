@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import java.util.Set;
 
@@ -89,4 +90,9 @@ public class ConnectActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
+
+    public void onClickEventConnectButton(View view){
+        Intent launchActivityVideo = new Intent(ConnectActivity.this, VideoActivity.class);
+        startActivity(launchActivityVideo);
+    }
 }
