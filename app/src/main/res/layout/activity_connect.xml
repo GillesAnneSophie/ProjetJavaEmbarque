@@ -10,16 +10,17 @@
         android:id="@+id/connectionSelect"
         android:layout_width="409dp"
         android:layout_height="50dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="162dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/connectButton"
         android:layout_width="409dp"
         android:layout_height="150dp"
-        android:text="Connect"
+        android:text="@string/connect_button"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -11,19 +11,20 @@
         android:layout_width="409dp"
         android:layout_height="150dp"
         android:onClick="onClickEventDownloadButton"
-        android:text="Download"
+        android:text="@string/main_download_button"
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="180dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/shareButton"
         android:layout_width="409dp"
         android:layout_height="150dp"
         android:layout_marginTop="50dp"
-        android:text="Share"
+        android:onClick="onClickEventShareButton"
+        android:text="@string/main_share_button"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">server</string>
+
+    <!-- activity_main -->
+    <string name="main_download_button">Download</string>
+    <string name="main_share_button">Share</string>
+
+    <!-- activity_download -->
+    <string name="download_button">Download</string>
+
+    <!-- activity_share -->
+    <string name="share_connected_to_text">Connected to:</string>
 </resources>
