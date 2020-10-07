@@ -14,9 +14,14 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,15 +34,32 @@ public class ConnectActivity extends AppCompatActivity {
     String dStarted = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
     String dFinished = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
 
+    ArrayList<String> devicesName = new ArrayList<String>();
+    ArrayList<String> devicesMac = new ArrayList<String>();
+
+    HashMap<String,String> spinnerMap;
+
+    String[] spinnerArray;
+
+    Spinner connectionSelectionSpinner;
+
     BroadcastReceiver discoveryResult = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String remoteDeviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
             BluetoothDevice remoteDevice;
             remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            /*
             Toast.makeText(getApplicationContext(), "Discovered: " + remoteDeviceName,
                     Toast.LENGTH_SHORT).show();
                     Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
+
+             */
+            Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
+                    if(!(remoteDeviceName == null || remoteDeviceName.equals("null"))){
+                        devicesName.add(remoteDeviceName);
+                        devicesMac.add(remoteDevice.getAddress());
+                    }
 
             // TODO Do something with the remote Bluetooth Device.
         }
@@ -50,20 +72,37 @@ public class ConnectActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent)
         {
             if (dStarted.equals(intent.getAction())) {
-                Toast.makeText(getApplicationContext(), "Discovery Started . . . ", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Discovery Started . . . ", Toast.LENGTH_SHORT).show();
                 Log.i(CLASSNAME, "Discovery Monitor - Discovery Started");
             }
             else if (dFinished.equals(intent.getAction())) {
                 Toast.makeText(getApplicationContext(), "Discovery Completed . . . ", Toast.LENGTH_SHORT).show();
+                spinnerMap = new HashMap<String, String>();
+                spinnerArray = new String[devicesName.size()];
+                for (int i = 0; i < devicesName.size(); i++)
+                {
+                    spinnerMap.put(devicesName.get(i),devicesMac.get(i));
+                    spinnerArray[i] = devicesName.get(i);
+                }
+
+
+                Log.i(CLASSNAME,"ArrayAdapter-1");
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_spinner_item, spinnerArray);
+                Log.i(CLASSNAME,"ArrayAdapter-2");
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                connectionSelectionSpinner.setAdapter(adapter);
+
                 Log.i(CLASSNAME, "Discovery Monitor - Discovery Finished");
             }
+            /*
             Log.i(CLASSNAME, "Discovery Monitor intent.getAction() : " + intent.getAction());
             Log.i(CLASSNAME, "Discovery Monitor intent.getExtras() : " + intent.getExtras());
 
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE));
-            Log.i(CLASSNAME, "Discovery monitor - Onreceive");
+
             Log.i(CLASSNAME, "Discovery monitor - onReceive");
+             */
         }
     };
 
@@ -88,6 +127,7 @@ public class ConnectActivity extends AppCompatActivity {
                 { tt = "Bluetooth on";
                     Log.i(CLASSNAME, "BluetoothAdapter.STATE_ON");
                     // unregisterReceiver(this);
+                    /*
                     if (!bluetoothAdapter.isDiscovering()) {
                         ActivityCompat.requestPermissions(ConnectActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},2);
                         if (bluetoothAdapter!=null) {
@@ -95,6 +135,7 @@ public class ConnectActivity extends AppCompatActivity {
                             Log.i(CLASSNAME, "Run Discovery");
                         }
                     }
+                     */
                     break;
                 }
                 case (BluetoothAdapter.STATE_TURNING_OFF) :
@@ -117,6 +158,21 @@ public class ConnectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
+
+        final Button refreshButton = findViewById(R.id.refreshButton);
+        connectionSelectionSpinner = findViewById(R.id.connectionSelect);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (!bluetoothAdapter.isDiscovering()) {
+                    ActivityCompat.requestPermissions(ConnectActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},2);
+                    if (bluetoothAdapter!=null) {
+                        bluetoothAdapter.startDiscovery();
+                        Log.i(CLASSNAME, "Run Discovery");
+                    }
+                }
+                // Code here executes on main thread after user presses button
+            }
+        });
 
         Log.i(CLASSNAME, "onCreate");
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -155,7 +211,7 @@ public class ConnectActivity extends AppCompatActivity {
             registerReceiver(discoveryMonitor, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
             registerReceiver(discoveryMonitor, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
 
-            BluetoothAdapter.getDefaultAdapter().startDiscovery();
+            //BluetoothAdapter.getDefaultAdapter().startDiscovery();
             //registerReceiver(discoveryMonitor, discoveryMonitorIntentFilter);
 
 
@@ -177,14 +233,14 @@ public class ConnectActivity extends AppCompatActivity {
                     String deviceHardwareAddress = device.getAddress(); // MAC addressLog.i(CLASSNAME,i + " : " + deviceName + " | " + deviceHardwareAddress);
                 }
             }
-
+/*
             Boolean test;
 
             if (!bluetoothAdapter.isDiscovering()) {
                 test = bluetoothAdapter.startDiscovery();
                 Log.wtf(CLASSNAME,test.toString());
             }
-
+*/
             Log.wtf(CLASSNAME,"TEST TEST TEST");
             // Log.wtf(CLASSNAME,test.toString());
             // Register for broadcasts when a device is discovered.
@@ -246,7 +302,7 @@ public class ConnectActivity extends AppCompatActivity {
                 // Get a BluetoothSocket to connect with the given BluetoothDevice.
                 // MY_UUID is the app's UUID string, also used in the server code.
                 String uniqueID = UUID.randomUUID().toString();
-
+                //String uniqueID = "TEST";
                 tmp = device.createRfcommSocketToServiceRecord(UUID.fromString(uniqueID));
             } catch (IOException e) {
                 Log.e(CLASSNAME, "Socket's create() method failed", e);
