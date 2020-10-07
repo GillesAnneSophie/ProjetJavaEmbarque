@@ -170,8 +170,8 @@ public class ShareActivity extends AppCompatActivity {
             while (true) {
                 Log.i(CLASSNAME, "ThreadAccept run() - Thread running ...");
                 try {
-                    Log.i(CLASSNAME, "ThreadAccept run() - Accept Connection");
                     socket = mmServerSocket.accept();
+                    Log.i(CLASSNAME, "ThreadAccept run() - Accept Connection");
                     //Log.i(CLASSNAME, "ThreadAccept run() - accept");
                 } catch (IOException e) {
                     Log.e(CLASSNAME, "Socket's accept() method failed", e);

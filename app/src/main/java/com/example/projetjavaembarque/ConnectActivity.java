@@ -349,7 +349,7 @@ public class ConnectActivity extends AppCompatActivity {
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and return.
                 Log.i(CLASSNAME, "ConnectThread - run : unable to connect");
-
+                Log.i(CLASSNAME, "ConnectThread - run : Exception -> "+ connectException);
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {
