@@ -156,7 +156,7 @@ public class ShareActivity extends AppCompatActivity {
             String uniqueId = UUID.randomUUID().toString();
             try {
                 // MY_UUID is the app's UUID string, also used by the client code.
-                tmp = BluetoothAdapter.getDefaultAdapter().listenUsingRfcommWithServiceRecord("NAME", UUID.fromString(uniqueId));
+                tmp = BluetoothAdapter.getDefaultAdapter().listenUsingRfcommWithServiceRecord("NAME", UUID.fromString("10feabf6-c971-42d5-aeb8-00b15e40672f"));
             } catch (IOException e) {
                 Log.e(CLASSNAME, "Socket's listen() method failed", e);
             }

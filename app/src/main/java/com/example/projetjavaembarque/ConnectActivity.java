@@ -327,7 +327,7 @@ public class ConnectActivity extends AppCompatActivity {
                 // MY_UUID is the app's UUID string, also used in the server code.
                 String uniqueID = UUID.randomUUID().toString();
                 //String uniqueID = "TEST";
-                tmp = device.createRfcommSocketToServiceRecord(UUID.fromString(uniqueID));
+                tmp = device.createRfcommSocketToServiceRecord(UUID.fromString("10feabf6-c971-42d5-aeb8-00b15e40672f"));
                 Log.i(CLASSNAME, "UUID : "+uniqueID);
             } catch (IOException e) {
                 Log.e(CLASSNAME, "Socket's create() method failed", e);
