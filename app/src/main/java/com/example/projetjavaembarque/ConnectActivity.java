@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Set;
@@ -22,13 +23,88 @@ public class ConnectActivity extends AppCompatActivity {
     private final static int REQUEST_ENABLE_BT = 1;
     // private final static String CLASSNAME = ConnectActivity.getClass().getSimpleName();
     private final static String CLASSNAME = ConnectActivity.class.getSimpleName();
+    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    String dStarted = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
+    String dFinished = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
+
+    BroadcastReceiver discoveryResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String remoteDeviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
+            BluetoothDevice remoteDevice;
+            remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            Toast.makeText(getApplicationContext(), "Discovered: " + remoteDeviceName,
+                    Toast.LENGTH_SHORT).show();
+                    // TODO Do something with the remote Bluetooth Device.
+        }
+    };
+
+    BroadcastReceiver discoveryMonitor = new BroadcastReceiver() {
+        String dStarted = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
+        String dFinished = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            if (dStarted.equals(intent.getAction())) {
+                Toast.makeText(getApplicationContext(), "Discovery Started . . . ", Toast.LENGTH_SHORT).show();
+            }
+            else if (dFinished.equals(intent.getAction())) {
+            Toast.makeText(getApplicationContext(), "Discovery Completed . . . ", Toast.LENGTH_SHORT).show();
+            }
+            Log.i(CLASSNAME, "Discovery monitor - Onreceive");
+        }
+    };
+
+    BroadcastReceiver bluetoothState = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String prevStateExtra = BluetoothAdapter.EXTRA_PREVIOUS_STATE;
+            String stateExtra = BluetoothAdapter.EXTRA_STATE;
+
+            int state = intent.getIntExtra(stateExtra, -1);
+            int previousState = intent.getIntExtra(prevStateExtra, -1);
+            String tt = "";
+            switch (state) {
+                case (BluetoothAdapter.STATE_TURNING_ON) :
+                {
+                    Log.i(CLASSNAME, "BluetoothAdapter.STATE_TURNING_ON");
+                    tt = "Bluetooth turning on";
+
+                break;
+                }
+                case (BluetoothAdapter.STATE_ON) :
+                { tt = "Bluetooth on";
+                    Log.i(CLASSNAME, "BluetoothAdapter.STATE_ON");
+                    // unregisterReceiver(this);
+                    if (!bluetoothAdapter.isDiscovering()) {
+                        bluetoothAdapter.startDiscovery();
+                        Log.i(CLASSNAME,"Run Discovery");
+                    }
+                    break;
+                }
+                case (BluetoothAdapter.STATE_TURNING_OFF) :
+                { tt = "Bluetooth turning off";
+                    Log.i(CLASSNAME, "BluetoothAdapter.STATE_TURNING_OFF");
+                    break;
+                }
+                case (BluetoothAdapter.STATE_OFF) :
+                { tt = "Bluetooth off";
+                    Log.i(CLASSNAME, "BluetoothAdapter.STATE_OFF");
+                    break;
+                }
+                default: break;
+            }
+            Toast.makeText(ConnectActivity.this, tt, Toast.LENGTH_LONG).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
+
         Log.i(CLASSNAME, "onCreate");
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Log.i(CLASSNAME, "onCreate");
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
@@ -40,9 +116,24 @@ public class ConnectActivity extends AppCompatActivity {
             Log.i(CLASSNAME,"Device support Bluetooth");
             // If bluetooth is not enabled, ask user input for enabling
             if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                String actionStateChanged = BluetoothAdapter.ACTION_STATE_CHANGED;
+                String actionRequestEnable = BluetoothAdapter.ACTION_REQUEST_ENABLE;
+                registerReceiver(bluetoothState, new IntentFilter(actionStateChanged));
+                startActivityForResult(new Intent(actionRequestEnable), 0);
+            } else {
+                String actionStateChanged = BluetoothAdapter.ACTION_STATE_CHANGED;
+                String actionRequestEnable = BluetoothAdapter.ACTION_REQUEST_ENABLE;
+                registerReceiver(bluetoothState, new IntentFilter(actionStateChanged));
+                startActivityForResult(new Intent(actionRequestEnable), 0);
             }
+
+            IntentFilter discoveryMonitorIntentFilter = new IntentFilter();
+            discoveryMonitorIntentFilter.addAction(dStarted);
+            discoveryMonitorIntentFilter.addAction(dFinished);
+            registerReceiver(discoveryMonitor, discoveryMonitorIntentFilter);
+            // registerReceiver(discoveryMonitor, new IntentFilter(dStarted));
+            // registerReceiver(discoveryMonitor, new IntentFilter(dFinished));
+            registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
 
             // Before performing device discovery, it's worth querying the set of paired devices to see if the desired device is already known.
             Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -55,22 +146,32 @@ public class ConnectActivity extends AppCompatActivity {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
                     String deviceName = device.getName();
-                    String deviceHardwareAddress = device.getAddress(); // MAC address
-                    Log.i(CLASSNAME,i + " : " + deviceName + " | " + deviceHardwareAddress);
+                    String deviceHardwareAddress = device.getAddress(); // MAC addressLog.i(CLASSNAME,i + " : " + deviceName + " | " + deviceHardwareAddress);
                 }
-
-                // Register for broadcasts when a device is discovered.
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                registerReceiver(receiver, filter);
-
             }
+
+            Boolean test;
+
+            if (!bluetoothAdapter.isDiscovering()) {
+                test = bluetoothAdapter.startDiscovery();
+                Log.wtf(CLASSNAME,test.toString());
+            }
+
+            Log.wtf(CLASSNAME,"TEST TEST TEST");
+            // Log.wtf(CLASSNAME,test.toString());
+            // Register for broadcasts when a device is discovered.
+            /*
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(receiver, filter);
+             */
         }
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND.
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver discovery = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            Log.i(CLASSNAME,"BroadcastReceiver");
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
@@ -94,7 +195,7 @@ public class ConnectActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // Don't forget to unregister the ACTION_FOUND receiver.
-        unregisterReceiver(receiver);
+        //unregisterReceiver(receiver);
     }
 
 

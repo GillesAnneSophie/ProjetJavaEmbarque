@@ -85,13 +85,25 @@ public class ShareActivity extends AppCompatActivity {
 
         IntentFilter filter1 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(bluetoothStateBroadcastReceiver, filter1);
+/*
 
-        IntentFilter filter2 = new IntentFilter();
+*/
+        IntentFilter filter2 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter2.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter2.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter2.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         registerReceiver(bluetoothDiscoveryStateBroadcastReceiver, filter2);
-
+/*
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String prevScanMode = BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE;
+                String scanModeStr = BluetoothAdapter.EXTRA_SCAN_MODE;
+                int scanMode = intent.getIntExtra(scanModeStr, -1);
+                int prevMode = intent.getIntExtra(prevScanMode, -1);
+            }
+        }, new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED));
+*/
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             // Device does not support Bluetooth
@@ -100,7 +112,7 @@ public class ShareActivity extends AppCompatActivity {
         } else if (!mBluetoothAdapter.isEnabled()) {
             // Bluetooth is not enabled :)
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            //startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             Log.i(CLASSNAME,"onCreate - Bluetooth isn't enabled");
 
             /*
@@ -108,18 +120,30 @@ public class ShareActivity extends AppCompatActivity {
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(discoverableIntent);
              */
-        } else {
-            // Bluetooth is enabled
-            enableDiscovery();
         }
-
-        Log.i(CLASSNAME,"onCreate - Processing bluetooth data");
+        enableDiscovery();
+        //Log.i(CLASSNAME,"onCreate - Processing bluetooth data");
     }
 
     public void enableDiscovery() {
+        /*
+        String aDiscoverable = BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE;
+        startActivityForResult(new Intent(aDiscoverable), REQUEST_ENABLE_BT);
+        */
+
+
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ENABLE_BT) {
+            boolean isDiscoverable = resultCode > 0;
+            int discoverableDuration = resultCode;
+        }
     }
 
     private class AcceptThread extends Thread {
