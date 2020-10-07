@@ -25,7 +25,9 @@
         <activity android:name=".VideoActivity"
             android:configChanges="orientation|screenSize"
             android:alwaysRetainTaskState="true" />
-        <activity android:name=".ConnectActivity">
+        <activity android:name=".ConnectActivity"
+            android:configChanges="orientation|screenSize"
+            android:alwaysRetainTaskState="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
