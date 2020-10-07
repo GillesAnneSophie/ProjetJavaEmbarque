@@ -17,15 +17,12 @@ public class ExistingVideoDialogFragment extends DialogFragment {
         // Use `newInstance` instead as shown below
     }
 
-
-
     public static ExistingVideoDialogFragment newInstance(String title) {
         ExistingVideoDialogFragment frag = new ExistingVideoDialogFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
         frag.setArguments(args);
         return frag;
-
     }
 
     @Override
@@ -35,12 +32,11 @@ public class ExistingVideoDialogFragment extends DialogFragment {
         // builder.setMessage(R.string.dialog_fire_missiles)
         builder.setMessage("File already existing. Create copy ?")
                 //.setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
-                .setPositiveButton(getActivity().getClass().getSimpleName(), new DialogInterface.OnClickListener() {
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // FIRE ZE MISSILES!
                         // getActivity().getClass().getSimpleName();
                         Log.i(this.getClass().getSimpleName(), getActivity().getClass().getSimpleName());
-                        Log.i(this.getClass().getSimpleName(),"iiiiiiiiiiiiiiiiiiiiii");
                         // getActivity().getClass().tes
                     }
                 })

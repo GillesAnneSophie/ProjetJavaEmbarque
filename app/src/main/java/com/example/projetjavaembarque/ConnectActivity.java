@@ -64,9 +64,9 @@ public class ConnectActivity extends AppCompatActivity {
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery monitor - Onreceive");
+            Log.i(CLASSNAME, "Discovery monitor - onReceive");
         }
     };
-
 
     BroadcastReceiver bluetoothState = new BroadcastReceiver() {
         @Override
