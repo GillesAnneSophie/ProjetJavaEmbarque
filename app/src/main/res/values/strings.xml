@@ -4,6 +4,7 @@
     <!-- activity_video -->
     <string name="video_connected_to_text">Connected to:</string>
 
-    <!-- activity_video -->
+    <!-- activity_connect -->
     <string name="connect_button">Connect</string>
+    <string name="connect_refresh_button">Refresh</string>
 </resources>

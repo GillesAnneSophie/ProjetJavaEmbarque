@@ -6,11 +6,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -43,16 +41,16 @@ public class DownloadActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
-                Log.i(CLASSNAME, "onClick");
+                Log.i(CLASSNAME, "User clicked on Download button");
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if (checkPermission()){
-                        // https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4
-                        // https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4
-                        // https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4
-                        // beginDownload("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
+                    if(checkPermission()){
                         beginDownload("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4");
-                    } else {
+                    }
+                    else{
                         requestPermission();
+                        if(checkPermission()){
+                            beginDownload("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4");
+                        }
                     }
                 }
                 else{
@@ -123,7 +121,7 @@ public class DownloadActivity extends AppCompatActivity {
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                     .setDestinationUri(Uri.fromFile(file))
                     .setAllowedOverRoaming(true);
-            Log.i(CLASSNAME,"ELSE");
+            Log.i(CLASSNAME,"beginDownload() - "+ Uri.fromFile(file).toString());
         }
 
         DownloadManager downloadManager=(DownloadManager)getSystemService(DOWNLOAD_SERVICE);
@@ -142,9 +140,6 @@ public class DownloadActivity extends AppCompatActivity {
         }
     };
 
-    public void test() {
-        Log.i(CLASSNAME,"AAAAAAAAAAAAAAAAAAA");
-    }
     //void updateFromDownload(T result);
     @Override
     protected void onDestroy() {
@@ -165,7 +160,7 @@ public class DownloadActivity extends AppCompatActivity {
 
 
     private void requestPermission() {
-
+        Log.i(CLASSNAME, "Request permissions");
         ActivityCompat.requestPermissions(DownloadActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
     }
 }
