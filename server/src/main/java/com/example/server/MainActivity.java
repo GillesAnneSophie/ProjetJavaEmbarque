@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-    private final static String CLASSNAME = ShareActivity.class.getSimpleName();
+    private final static String CLASSNAME = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
