@@ -48,7 +48,7 @@ public class ConnectActivity extends AppCompatActivity {
 
     Spinner connectionSelectionSpinner;
 
-    private Handler handler; // handler that gets info from Bluetooth service
+    private Handler handler = new Handler(); // handler that gets info from Bluetooth service
 
     // Defines several constants used when transmitting messages between the
     // service and the UI.

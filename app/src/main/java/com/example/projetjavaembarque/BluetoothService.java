@@ -13,7 +13,7 @@ import java.io.OutputStream;
 public class BluetoothService {
     //private static final String TAG = "MY_APP_DEBUG_TAG";
     private static final String CLASSNAME = BluetoothService.class.getSimpleName();
-    private Handler handler; // handler that gets info from Bluetooth service
+    private Handler handler = new Handler(); // handler that gets info from Bluetooth service
 
     // Defines several constants used when transmitting messages between the
     // service and the UI.

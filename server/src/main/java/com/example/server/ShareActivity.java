@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ShareActivity extends AppCompatActivity {
     private final static String CLASSNAME = ShareActivity.class.getSimpleName();
     private final static int REQUEST_ENABLE_BT = 1;
-    private Handler handler; // handler that gets info from Bluetooth service
+    private Handler handler = new Handler(); // handler that gets info from Bluetooth service
 
     // Defines several constants used when transmitting messages between the
     // service and the UI.
