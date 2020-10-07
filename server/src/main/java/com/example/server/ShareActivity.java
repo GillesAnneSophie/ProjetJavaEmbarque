@@ -202,7 +202,7 @@ public class ShareActivity extends AppCompatActivity {
                     // the connection in a separate thread.
                     //manageMyConnectedSocket(socket);
                     ConnectedThread connectedThread = new ConnectedThread(socket);
-                    connectedThread.run();
+                    connectedThread.start();
                     connectedThread.write("fezfezfef".getBytes());
 
                     try {

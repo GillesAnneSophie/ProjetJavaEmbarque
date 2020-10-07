@@ -377,7 +377,7 @@ public class ConnectActivity extends AppCompatActivity {
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
             ConnectedThread connectedThread = new ConnectedThread(mmSocket);
-            connectedThread.run();
+            connectedThread.start();
 
             //manageMyConnectedSocket(mmSocket);
         }
