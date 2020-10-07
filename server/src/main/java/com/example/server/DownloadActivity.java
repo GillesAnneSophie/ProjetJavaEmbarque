@@ -70,6 +70,7 @@ public class DownloadActivity extends AppCompatActivity {
         File file = new File(getExternalFilesDir(null),fileName);
 
         if(file.exists()) {
+            file.delete();
             /*
             Log.i(CLASSNAME, "beginDownload() - File on path " + fileName + " already exists.");
             AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
