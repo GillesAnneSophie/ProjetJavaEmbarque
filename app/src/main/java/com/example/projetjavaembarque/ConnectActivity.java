@@ -72,12 +72,13 @@ public class ConnectActivity extends AppCompatActivity {
                     Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
 
              */
-                    if(!(remoteDeviceName == null || remoteDeviceName.equals("null"))){
+                    if(!(remoteDeviceName == null || remoteDeviceName.equals("null"))  && (!devicesMap.containsValue(remoteDevice))) {
                         devicesName.add(remoteDeviceName);
                         devicesMac.add(remoteDevice.getAddress());
                         devicesMap.put(remoteDevice.getAddress(), remoteDevice);
-                        Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
-                        Log.i(CLASSNAME,"Mapped device : Mac = " + remoteDevice.getAddress() + " | Mapped Mac = " + devicesMap.get(remoteDevice.getAddress()).getAddress());
+                        // (remoteDevice.getAddress(), remoteDevice);
+                        Log.i(CLASSNAME,"Discovereeeeed device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
+                        // Log.i(CLASSNAME,"Mapped device : Mac = " + remoteDevice.getAddress() + " | Mapped Mac = " + devicesMap.get(remoteDevice.getAddress()).getAddress());
                     }
 
             // TODO Do something with the remote Bluetooth Device.
@@ -100,6 +101,7 @@ public class ConnectActivity extends AppCompatActivity {
                 spinnerArray = new String[devicesName.size()];
                 for (int i = 0; i < devicesName.size(); i++)
                 {
+                    Log.i(CLASSNAME, "FOR I : "+i);
                     spinnerMap.put(devicesName.get(i),devicesMac.get(i));
                     spinnerArray[i] = devicesName.get(i);
                 }
@@ -182,13 +184,13 @@ public class ConnectActivity extends AppCompatActivity {
         connectionSelectionSpinner = findViewById(R.id.connectionSelect);
         refreshButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (!bluetoothAdapter.isDiscovering()) {
+                //if (!bluetoothAdapter.isDiscovering()) {
                     ActivityCompat.requestPermissions(ConnectActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},2);
                     if (bluetoothAdapter!=null) {
                         bluetoothAdapter.startDiscovery();
                         Log.i(CLASSNAME, "Run Discovery");
                     }
-                }
+                //}
                 // Code here executes on main thread after user presses button
             }
         });
@@ -216,26 +218,10 @@ public class ConnectActivity extends AppCompatActivity {
                 registerReceiver(bluetoothState, new IntentFilter(actionStateChanged));
                 startActivityForResult(new Intent(actionRequestEnable), 0);
             }
-        /*
-            IntentFilter discoveryMonitorIntentFilter = new IntentFilter();
-            discoveryMonitorIntentFilter.addAction(dStarted);
-            discoveryMonitorIntentFilter.addAction(dFinished);
-            registerReceiver(discoveryMonitor, discoveryMonitorIntentFilter);
-        */
-            //IntentFilter discoveryMonitorIntentFilter = new IntentFilter();
-            //discoveryMonitorIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-            //discoveryMonitorIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            //discoveryMonitorIntentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
 
             registerReceiver(discoveryMonitor, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
             registerReceiver(discoveryMonitor, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
 
-            //BluetoothAdapter.getDefaultAdapter().startDiscovery();
-            //registerReceiver(discoveryMonitor, discoveryMonitorIntentFilter);
-
-
-            // registerReceiver(discoveryMonitor, new IntentFilter(dStarted));
-            // registerReceiver(discoveryMonitor, new IntentFilter(dFinished));
             registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
 
             // Before performing device discovery, it's worth querying the set of paired devices to see if the desired device is already known.
@@ -270,29 +256,6 @@ public class ConnectActivity extends AppCompatActivity {
         }
     }
 
-    // Create a BroadcastReceiver for ACTION_FOUND.
-    private final BroadcastReceiver discovery = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.i(CLASSNAME,"BroadcastReceiver");
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Discovery has found a device. Get the BluetoothDevice
-                // object and its info from the Intent.
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-
-                Log.i(CLASSNAME,"Discovered device : Name = " + deviceName + " | Mac = " + deviceHardwareAddress);
-
-                ConnectThread thread = new ConnectThread(device);
-                thread.start();
-
-                BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-
-
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
@@ -427,12 +390,24 @@ public class ConnectActivity extends AppCompatActivity {
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
+                    Log.i(CLASSNAME, "BEFORE READ");
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
                     // Send the obtained bytes to the UI activity.
+                    Log.i(CLASSNAME, "BEFORE OBTAINMESSAGE");
                     Message readMsg = handler.obtainMessage(
                             MessageConstants.MESSAGE_READ, numBytes, -1,
                             mmBuffer);
+                    Log.i(CLASSNAME, "AFTER OBTAINMESSAGE");
+                    Log.i(CLASSNAME, readMsg.toString());
+                    Log.i(CLASSNAME, "MESSAGE obg : "+readMsg.obj.getClass());
+
+                    byte[] readBuf = (byte[]) readMsg.obj;
+
+                    String readMessage = new String(readBuf, 0, readMsg.arg1);
+
+                    Log.i(CLASSNAME, "MESSAGE obg readMessage : "+readMessage);
+
                     readMsg.sendToTarget();
                 } catch (IOException e) {
                     Log.d(CLASSNAME, "Input stream was disconnected", e);

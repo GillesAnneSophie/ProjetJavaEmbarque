@@ -110,17 +110,7 @@ public class ShareActivity extends AppCompatActivity {
         filter2.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter2.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         registerReceiver(bluetoothDiscoveryStateBroadcastReceiver, filter2);
-/*
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String prevScanMode = BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE;
-                String scanModeStr = BluetoothAdapter.EXTRA_SCAN_MODE;
-                int scanMode = intent.getIntExtra(scanModeStr, -1);
-                int prevMode = intent.getIntExtra(prevScanMode, -1);
-            }
-        }, new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED));
-*/
+
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             // Device does not support Bluetooth
@@ -260,12 +250,15 @@ public class ShareActivity extends AppCompatActivity {
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
+                    Log.i(CLASSNAME, "BEFORE READ");
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
                     // Send the obtained bytes to the UI activity.
+                    Log.i(CLASSNAME, "BEFORE OBTAINMESSAGE");
                     Message readMsg = handler.obtainMessage(
                             MessageConstants.MESSAGE_READ, numBytes, -1,
                             mmBuffer);
+                    Log.i(CLASSNAME, "AFTER OBTAINMESSAGE");
                     readMsg.sendToTarget();
                 } catch (IOException e) {
                     Log.d(CLASSNAME, "Input stream was disconnected", e);
