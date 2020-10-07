@@ -51,7 +51,7 @@ public class ConnectActivity extends AppCompatActivity {
             else if (dFinished.equals(intent.getAction())) {
             Toast.makeText(getApplicationContext(), "Discovery Completed . . . ", Toast.LENGTH_SHORT).show();
             }
-            Log.i(CLASSNAME, "Discovery monitor - Onreceive");
+            Log.i(CLASSNAME, "Discovery monitor - onReceive");
         }
     };
 

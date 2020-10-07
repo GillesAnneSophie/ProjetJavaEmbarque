@@ -22,11 +22,10 @@ import android.widget.Button;
 import android.widget.Toast;
 import java.io.File;
 
-// For Network connectivity, Activity should inherit from FramgmentActivity. Since AppCompatActivity inherit from FragmentActivity, it should be okay.
+// For Network connectivity, Activity should inherit from FragmentActivity. Since AppCompatActivity inherit from FragmentActivity, it should be okay.
 public class DownloadActivity extends AppCompatActivity {
     private final static String CLASSNAME = DownloadActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 1;
-    private Button btn_download;
     private long downloadId;
 
     @Override
@@ -36,7 +35,7 @@ public class DownloadActivity extends AppCompatActivity {
 
         registerReceiver(onDownloadComplete,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        btn_download=findViewById(R.id.downloadVideoButton);
+        Button btn_download = findViewById(R.id.downloadVideoButton);
         btn_download.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -102,7 +101,7 @@ public class DownloadActivity extends AppCompatActivity {
             Log.i(CLASSNAME, "beginDownload() - File doesn't exists.");
         }
         //now if download complete file not visible now lets show it
-        DownloadManager.Request request=null;
+        DownloadManager.Request request;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             request = new DownloadManager.Request(Uri.parse(fileHttpUrl))
                     .setTitle(fileName)
@@ -112,7 +111,6 @@ public class DownloadActivity extends AppCompatActivity {
                     .setRequiresCharging(false)
                     .setAllowedOverMetered(true)
                     .setAllowedOverRoaming(true);
-            Log.i(CLASSNAME,"beginDownload() - " + Uri.fromFile(file).toString());
         }
         else{
             request = new DownloadManager.Request(Uri.parse(fileHttpUrl))
@@ -121,8 +119,8 @@ public class DownloadActivity extends AppCompatActivity {
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                     .setDestinationUri(Uri.fromFile(file))
                     .setAllowedOverRoaming(true);
-            Log.i(CLASSNAME,"beginDownload() - "+ Uri.fromFile(file).toString());
         }
+        Log.i(CLASSNAME,"beginDownload() - " + Uri.fromFile(file).toString());
 
         DownloadManager downloadManager=(DownloadManager)getSystemService(DOWNLOAD_SERVICE);
         downloadId=downloadManager.enqueue(request);

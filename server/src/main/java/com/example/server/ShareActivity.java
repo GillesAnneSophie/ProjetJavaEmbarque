@@ -55,15 +55,15 @@ public class ShareActivity extends AppCompatActivity {
 
                 switch(mode){
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.i(CLASSNAME, "Bluetooth Discovery BroadReceiver - Discory State - SCAN_MODE_CONNECTABLE_DISCOVERABLE");
+                        Log.i(CLASSNAME, "Bluetooth Discovery BroadReceiver - Discovery State - SCAN_MODE_CONNECTABLE_DISCOVERABLE");
                         AcceptThread thread = new AcceptThread();
                         thread.start();
                         break;
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.i(CLASSNAME, "Bluetooth Discovery BroadReceiver - Discory State - SCAN_MODE_CONNECTABLE");
+                        Log.i(CLASSNAME, "Bluetooth Discovery BroadReceiver - Discovery State - SCAN_MODE_CONNECTABLE");
                         break;
                     case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.i(CLASSNAME, "Bluetooth Discovery BroadReceiver - Discory State - SCAN_MODE_NONE");
+                        Log.i(CLASSNAME, "Bluetooth Discovery BroadReceiver - Discovery State - SCAN_MODE_NONE");
                         break;
                 }
             }
@@ -164,13 +164,13 @@ public class ShareActivity extends AppCompatActivity {
         }
 
         public void run() {
-            BluetoothSocket socket = null;
+            BluetoothSocket socket;
 
             // Keep listening until exception occurs or a socket is returned.
             while (true) {
                 Log.i(CLASSNAME, "ThreadAccept run() - Thread running ...");
                 try {
-                    Log.i(CLASSNAME, "ThreadAccept run() - Acception Connection");
+                    Log.i(CLASSNAME, "ThreadAccept run() - Accept Connection");
                     socket = mmServerSocket.accept();
                     //Log.i(CLASSNAME, "ThreadAccept run() - accept");
                 } catch (IOException e) {
