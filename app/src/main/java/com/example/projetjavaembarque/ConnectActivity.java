@@ -1,7 +1,9 @@
 package com.example.projetjavaembarque;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -56,11 +58,6 @@ public class ConnectActivity extends AppCompatActivity {
             Log.i(CLASSNAME, "Discovery Monitor intent.getAction() : " + intent.getAction());
             Log.i(CLASSNAME, "Discovery Monitor intent.getExtras() : " + intent.getExtras());
 
-            for (String key : intent.getExtras().keySet()) {
-                Log.i(CLASSNAME, key + " " + intent.getExtras().get(key));//To Implement
-            }
-
-
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery monitor - Onreceive");
@@ -90,8 +87,11 @@ public class ConnectActivity extends AppCompatActivity {
                     Log.i(CLASSNAME, "BluetoothAdapter.STATE_ON");
                     // unregisterReceiver(this);
                     if (!bluetoothAdapter.isDiscovering()) {
-                        bluetoothAdapter.startDiscovery();
-                        Log.i(CLASSNAME,"Run Discovery");
+                        ActivityCompat.requestPermissions(ConnectActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},2);
+                        if (bluetoothAdapter!=null) {
+                            bluetoothAdapter.startDiscovery();
+                            Log.i(CLASSNAME, "Run Discovery");
+                        }
                     }
                     break;
                 }
