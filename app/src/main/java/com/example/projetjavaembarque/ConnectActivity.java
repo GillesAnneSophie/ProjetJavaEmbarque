@@ -27,16 +27,17 @@ public class ConnectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
-
+        Log.i(CLASSNAME, "onCreate");
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Log.i(CLASSNAME, "onCreate");
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
-            Log.wtf(CLASSNAME,"Device doesn't support Bluetooth");
+            Log.i(CLASSNAME,"Device doesn't support Bluetooth");
 
             // TODO - Determine app's behaviour
         } else {
             // TODO - Determine app's behaviour
-
+            Log.i(CLASSNAME,"Device support Bluetooth");
             // If bluetooth is not enabled, ask user input for enabling
             if (!bluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -78,6 +79,9 @@ public class ConnectActivity extends AppCompatActivity {
                 String deviceHardwareAddress = device.getAddress(); // MAC address
 
                 Log.i(CLASSNAME,"Discovered device : Name = " + deviceName + " | Mac = " + deviceHardwareAddress);
+
+                ConnectThread thread = new ConnectThread(device);
+                thread.start();
 
                 BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 
