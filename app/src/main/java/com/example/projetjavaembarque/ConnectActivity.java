@@ -56,11 +56,6 @@ public class ConnectActivity extends AppCompatActivity {
             Log.i(CLASSNAME, "Discovery Monitor intent.getAction() : " + intent.getAction());
             Log.i(CLASSNAME, "Discovery Monitor intent.getExtras() : " + intent.getExtras());
 
-            for (String key : intent.getExtras().keySet()) {
-                Log.i(CLASSNAME, key + " " + intent.getExtras().get(key));//To Implement
-            }
-
-
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery monitor - Onreceive");
