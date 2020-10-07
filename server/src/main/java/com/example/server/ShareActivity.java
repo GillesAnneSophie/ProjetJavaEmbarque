@@ -14,6 +14,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -193,7 +195,10 @@ public class ShareActivity extends AppCompatActivity {
                     //manageMyConnectedSocket(socket);
                     ConnectedThread connectedThread = new ConnectedThread(socket);
                     connectedThread.start();
-                    connectedThread.write("fezfezfef".getBytes());
+                    //File file = new File(getExternalFilesDir(null),fileName);
+                    // byte[] bArray = readFileToByteArray(file)
+                    Log.i(CLASSNAME, readFileToByteArray(new File(getExternalFilesDir(null), "file_example_MP4_640_3MG.mp4")).toString());
+                    connectedThread.write(readFileToByteArray(new File(getExternalFilesDir(null), "file_example_MP4_640_3MG.mp4")));
 
                     try {
                         mmServerSocket.close();
@@ -203,6 +208,21 @@ public class ShareActivity extends AppCompatActivity {
                     break;
                 }
             }
+        }
+
+        private byte[] readFileToByteArray(File file){
+            FileInputStream fis = null;
+            // Creating a byte array using the length of the file
+            // file.length returns long which is cast to int
+            byte[] bArray = new byte[(int) file.length()];
+            try{
+                fis = new FileInputStream(file);
+                fis.read(bArray);
+                fis.close();
+            }catch(IOException ioExp){
+                ioExp.printStackTrace();
+            }
+            return bArray;
         }
 
         // Closes the connect socket and causes the thread to finish.

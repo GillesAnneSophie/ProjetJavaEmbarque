@@ -400,7 +400,7 @@ public class ConnectActivity extends AppCompatActivity {
                             mmBuffer);
                     Log.i(CLASSNAME, "AFTER OBTAINMESSAGE");
                     Log.i(CLASSNAME, readMsg.toString());
-                    Log.i(CLASSNAME, "MESSAGE obg : "+readMsg.obj.getClass());
+                    Log.i(CLASSNAME, "MESSAGE obg : "+readMsg.obj.toString());
 
                     byte[] readBuf = (byte[]) readMsg.obj;
 
