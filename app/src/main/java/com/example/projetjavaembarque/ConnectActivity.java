@@ -37,7 +37,9 @@ public class ConnectActivity extends AppCompatActivity {
             remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             Toast.makeText(getApplicationContext(), "Discovered: " + remoteDeviceName,
                     Toast.LENGTH_SHORT).show();
-                    // TODO Do something with the remote Bluetooth Device.
+                    Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
+
+            // TODO Do something with the remote Bluetooth Device.
         }
     };
 
