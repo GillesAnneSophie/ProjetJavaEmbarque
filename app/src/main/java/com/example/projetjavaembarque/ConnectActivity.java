@@ -38,6 +38,7 @@ public class ConnectActivity extends AppCompatActivity {
     ArrayList<String> devicesMac = new ArrayList<String>();
 
     HashMap<String,String> spinnerMap;
+    HashMap<String,BluetoothDevice> devicesMap = new HashMap<String,BluetoothDevice>();;
 
     String[] spinnerArray;
 
@@ -55,10 +56,12 @@ public class ConnectActivity extends AppCompatActivity {
                     Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
 
              */
-            Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
                     if(!(remoteDeviceName == null || remoteDeviceName.equals("null"))){
                         devicesName.add(remoteDeviceName);
                         devicesMac.add(remoteDevice.getAddress());
+                        devicesMap.put(remoteDevice.getAddress(), remoteDevice);
+                        Log.i(CLASSNAME,"Discovered device : Name = " + remoteDeviceName + " | Mac = " + remoteDevice.getAddress());
+                        Log.i(CLASSNAME,"Mapped device : Mac = " + remoteDevice.getAddress() + " | Mapped Mac = " + devicesMap.get(remoteDevice.getAddress()).getAddress());
                     }
 
             // TODO Do something with the remote Bluetooth Device.
@@ -284,9 +287,30 @@ public class ConnectActivity extends AppCompatActivity {
 
 
     public void onClickEventConnectButton(View view){
+        Bundle newBundle = new Bundle();
+
+        String name = connectionSelectionSpinner.getSelectedItem().toString();
+
+        newBundle.putString("deviceName",name);
+        newBundle.putString("deviceMac",spinnerMap.get(name));
+
+        Log.i(CLASSNAME, "deviceName : "+name);
+        Log.i(CLASSNAME, "deviceMac : "+spinnerMap.get(name));
+        Log.i(CLASSNAME, "MappeddeviceMac : "+devicesMap.get(spinnerMap.get(name)).getAddress());
+        ConnectThread thread = new ConnectThread(devicesMap.get(spinnerMap.get(name)));
+        thread.run();
+
+        //Log.i(name);
+
+        /*
         Intent launchActivityVideo = new Intent(ConnectActivity.this, VideoActivity.class);
+        launchActivityVideo.putExtras(launchActivityVideo);
+        launchActivityVideo.putExtras(newBundle);
         startActivity(launchActivityVideo);
+
+         */
     }
+
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
@@ -304,6 +328,7 @@ public class ConnectActivity extends AppCompatActivity {
                 String uniqueID = UUID.randomUUID().toString();
                 //String uniqueID = "TEST";
                 tmp = device.createRfcommSocketToServiceRecord(UUID.fromString(uniqueID));
+                Log.i(CLASSNAME, "UUID : "+uniqueID);
             } catch (IOException e) {
                 Log.e(CLASSNAME, "Socket's create() method failed", e);
             }
@@ -315,12 +340,16 @@ public class ConnectActivity extends AppCompatActivity {
             // bluetoothAdapter.cancelDiscovery();
             BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 
+            Log.i(CLASSNAME, "ConnectThread - run");
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
+                Log.i(CLASSNAME, "ConnectThread - run : connect()");
                 mmSocket.connect();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and return.
+                Log.i(CLASSNAME, "ConnectThread - run : unable to connect");
+
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {

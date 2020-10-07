@@ -24,6 +24,15 @@ public class VideoActivity extends AppCompatActivity {
 
         videoView.setVideoPath("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
         videoView.start();
+
+        Log.i(CLASSNAME, "extras size : " + getIntent().getExtras().size());
+
+        getIntent().getExtras().getString("deviceName");
+        getIntent().getExtras().getString("deviceMac");
+
+        Log.i(CLASSNAME, "deviceName : "+getIntent().getExtras().getString("deviceName"));
+        Log.i(CLASSNAME, "Start video : "+getIntent().getExtras().getString("deviceMac"));
+
         Log.i(CLASSNAME, "Start video");
     }
 
