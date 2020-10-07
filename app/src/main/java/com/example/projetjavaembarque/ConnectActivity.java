@@ -47,13 +47,26 @@ public class ConnectActivity extends AppCompatActivity {
         {
             if (dStarted.equals(intent.getAction())) {
                 Toast.makeText(getApplicationContext(), "Discovery Started . . . ", Toast.LENGTH_SHORT).show();
+                Log.i(CLASSNAME, "Discovery Monitor - Discovery Started");
             }
             else if (dFinished.equals(intent.getAction())) {
-            Toast.makeText(getApplicationContext(), "Discovery Completed . . . ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Discovery Completed . . . ", Toast.LENGTH_SHORT).show();
+                Log.i(CLASSNAME, "Discovery Monitor - Discovery Finished");
             }
+            Log.i(CLASSNAME, "Discovery Monitor intent.getAction() : " + intent.getAction());
+            Log.i(CLASSNAME, "Discovery Monitor intent.getExtras() : " + intent.getExtras());
+
+            for (String key : intent.getExtras().keySet()) {
+                Log.i(CLASSNAME, key + " " + intent.getExtras().get(key));//To Implement
+            }
+
+
+            Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_SCAN_MODE));
+            Log.i(CLASSNAME, "Discovery Monitor intent.getStringExtra() : " + intent.getStringExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE));
             Log.i(CLASSNAME, "Discovery monitor - Onreceive");
         }
     };
+
 
     BroadcastReceiver bluetoothState = new BroadcastReceiver() {
         @Override
@@ -126,11 +139,24 @@ public class ConnectActivity extends AppCompatActivity {
                 registerReceiver(bluetoothState, new IntentFilter(actionStateChanged));
                 startActivityForResult(new Intent(actionRequestEnable), 0);
             }
-
+        /*
             IntentFilter discoveryMonitorIntentFilter = new IntentFilter();
             discoveryMonitorIntentFilter.addAction(dStarted);
             discoveryMonitorIntentFilter.addAction(dFinished);
             registerReceiver(discoveryMonitor, discoveryMonitorIntentFilter);
+        */
+            //IntentFilter discoveryMonitorIntentFilter = new IntentFilter();
+            //discoveryMonitorIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+            //discoveryMonitorIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            //discoveryMonitorIntentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+
+            registerReceiver(discoveryMonitor, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+            registerReceiver(discoveryMonitor, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+
+            BluetoothAdapter.getDefaultAdapter().startDiscovery();
+            //registerReceiver(discoveryMonitor, discoveryMonitorIntentFilter);
+
+
             // registerReceiver(discoveryMonitor, new IntentFilter(dStarted));
             // registerReceiver(discoveryMonitor, new IntentFilter(dFinished));
             registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
