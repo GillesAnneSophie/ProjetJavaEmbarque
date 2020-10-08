@@ -7,7 +7,4 @@
 
     <!-- activity_download -->
     <string name="download_button">Download</string>
-
-    <!-- activity_share -->
-    <string name="share_connected_to_text">Connected to:</string>
 </resources>
