@@ -21,6 +21,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -359,6 +362,8 @@ public class ConnectActivity extends AppCompatActivity {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+        private FileOutputStream mmFileOutStream;
+
         private byte[] mmBuffer; // mmBuffer store for the stream
 
         public ConnectedThread(BluetoothSocket socket) {
@@ -379,6 +384,13 @@ public class ConnectActivity extends AppCompatActivity {
                 Log.e(CLASSNAME, "Error occurred when creating output stream", e);
             }
 
+            File file = new File(getExternalFilesDir(null),"video.mp4");
+
+            try {
+                mmFileOutStream = new FileOutputStream(file, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
@@ -400,19 +412,45 @@ public class ConnectActivity extends AppCompatActivity {
                             mmBuffer);
                     Log.i(CLASSNAME, "AFTER OBTAINMESSAGE");
                     Log.i(CLASSNAME, readMsg.toString());
-                    Log.i(CLASSNAME, "MESSAGE obg : "+readMsg.obj.toString());
+                    Log.i(CLASSNAME, "RECEIVING DATA : "+readMsg.obj.toString());
 
                     byte[] readBuf = (byte[]) readMsg.obj;
 
                     String readMessage = new String(readBuf, 0, readMsg.arg1);
 
-                    Log.i(CLASSNAME, "MESSAGE obg readMessage : "+readMessage);
+                    // Log.i(CLASSNAME, "MESSAGE obg readMessage : "+readMessage);
+/*
+                    FileOutputStream out = new FileOutputStream("video.mp4");
+                    out.write(videoData);
+                    out.close();
+*/
+                    int length;
+//socketInputStream never returns -1 unless connection is broken
 
+                    while ((length = mmInStream.read(mmBuffer)) != -1) {
+                        //mmFileOutStream.write(mmBuffer, 0, length);
+                        //mmBuffer.toString();
+                        mmFileOutStream.write(readBuf);
+                        Log.i(CLASSNAME, "BYTES :" + mmBuffer.toString() );
+                    }
+
+                    //mmFileOutStream.write(mmBuffer);
+                    mmFileOutStream.write(readBuf);
+                    mmBuffer.toString();
+                    Log.i(CLASSNAME, "BYTES :" + mmBuffer.toString() );
+                    //mmFileOutStream.write(numBytes);
+                    //mmFileOutStream.append(numBytes);
+                    //mmFileOutStream.close();
                     readMsg.sendToTarget();
                 } catch (IOException e) {
                     Log.d(CLASSNAME, "Input stream was disconnected", e);
                     break;
                 }
+            }
+            try {
+                mmFileOutStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
@@ -424,6 +462,9 @@ public class ConnectActivity extends AppCompatActivity {
                 // Share the sent message with the UI activity.
                 Message writtenMsg = handler.obtainMessage(
                         MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
+
+                Log.e(CLASSNAME, "SENDING DATA : " + writtenMsg.obj.toString());
+
                 writtenMsg.sendToTarget();
             } catch (IOException e) {
                 Log.e(CLASSNAME, "Error occurred when sending data", e);

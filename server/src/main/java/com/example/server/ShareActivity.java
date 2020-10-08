@@ -295,6 +295,9 @@ public class ShareActivity extends AppCompatActivity {
                 // Share the sent message with the UI activity.
                 Message writtenMsg = handler.obtainMessage(
                         MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
+
+                Log.e(CLASSNAME, "SENDING DATA : " + writtenMsg.obj.toString());
+
                 writtenMsg.sendToTarget();
             } catch (IOException e) {
                 Log.e(CLASSNAME, "Error occurred when sending data", e);
