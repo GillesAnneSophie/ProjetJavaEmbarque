@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -284,13 +285,11 @@ public class ConnectActivity extends AppCompatActivity {
 
         //Log.i(name);
 
-        /*
-        Intent launchActivityVideo = new Intent(ConnectActivity.this, VideoActivity.class);
-        launchActivityVideo.putExtras(launchActivityVideo);
-        launchActivityVideo.putExtras(newBundle);
-        startActivity(launchActivityVideo);
 
-         */
+        Intent launchActivityVideo = new Intent(ConnectActivity.this, VideoActivity.class);
+        //launchActivityVideo.putExtras(launchActivityVideo);
+        //launchActivityVideo.putExtras(newBundle);
+        startActivity(launchActivityVideo);
     }
 
     private class ConnectThread extends Thread {
@@ -363,6 +362,7 @@ public class ConnectActivity extends AppCompatActivity {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
         private FileOutputStream mmFileOutStream;
+        private BufferedOutputStream mmBufferedOutStream;
 
         private byte[] mmBuffer; // mmBuffer store for the stream
 
@@ -385,9 +385,13 @@ public class ConnectActivity extends AppCompatActivity {
             }
 
             File file = new File(getExternalFilesDir(null),"video.mp4");
+            if(file.exists()) {
+                file.delete();
+            }
 
             try {
                 mmFileOutStream = new FileOutputStream(file, true);
+                mmBufferedOutStream = new BufferedOutputStream(mmFileOutStream);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -412,12 +416,12 @@ public class ConnectActivity extends AppCompatActivity {
                             mmBuffer);
                     Log.i(CLASSNAME, "AFTER OBTAINMESSAGE");
                     Log.i(CLASSNAME, readMsg.toString());
-                    Log.i(CLASSNAME, "RECEIVING DATA : "+readMsg.obj.toString());
+                    // Log.i(CLASSNAME, "RECEIVING DATA : "+readMsg.obj.toString());
 
                     byte[] readBuf = (byte[]) readMsg.obj;
 
                     String readMessage = new String(readBuf, 0, readMsg.arg1);
-
+                    Log.i(CLASSNAME, "RECEIVING DATA : "+readMessage);
                     // Log.i(CLASSNAME, "MESSAGE obg readMessage : "+readMessage);
 /*
                     FileOutputStream out = new FileOutputStream("video.mp4");
@@ -426,18 +430,22 @@ public class ConnectActivity extends AppCompatActivity {
 */
                     int length;
 //socketInputStream never returns -1 unless connection is broken
-
+/*
                     while ((length = mmInStream.read(mmBuffer)) != -1) {
                         //mmFileOutStream.write(mmBuffer, 0, length);
                         //mmBuffer.toString();
                         mmFileOutStream.write(readBuf);
                         Log.i(CLASSNAME, "BYTES :" + mmBuffer.toString() );
                     }
-
+*/
                     //mmFileOutStream.write(mmBuffer);
-                    mmFileOutStream.write(readBuf);
+                    // mmFileOutStream.write(readBuf);
+                    //mmFileOutStream.write(readBuf);
+                    mmBufferedOutStream.write(readBuf);
+                    //mmBufferedOutStream.write(numBytes);
                     mmBuffer.toString();
                     Log.i(CLASSNAME, "BYTES :" + mmBuffer.toString() );
+                    Log.i(CLASSNAME, "SIZE :" + readBuf.length );
                     //mmFileOutStream.write(numBytes);
                     //mmFileOutStream.append(numBytes);
                     //mmFileOutStream.close();
