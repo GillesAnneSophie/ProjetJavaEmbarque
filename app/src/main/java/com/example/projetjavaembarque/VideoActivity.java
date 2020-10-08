@@ -7,6 +7,8 @@ import android.util.Log;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import java.io.File;
+
 public class VideoActivity extends AppCompatActivity {
     private final static String CLASSNAME = VideoActivity.class.getSimpleName();
     private VideoView videoView;
@@ -22,7 +24,9 @@ public class VideoActivity extends AppCompatActivity {
         vidControl.setAnchorView(videoView);
         videoView.setMediaController(vidControl);
 
-        videoView.setVideoPath("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
+        // videoView.setVideoPath("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4");
+        videoView.setVideoPath(getExternalFilesDir(null) + File.separator + "video.mp4");
+        Log.i(CLASSNAME, getExternalFilesDir(null) + File.separator +"video.mp4");
         videoView.start();
 
         /*Log.i(CLASSNAME, "extras size : " + getIntent().getExtras().size());

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -413,17 +414,43 @@ public class ConnectActivity extends AppCompatActivity {
                     numBytes = mmInStream.read(mmBuffer);
                     // Send the obtained bytes to the UI activity.
                     Log.i(CLASSNAME, "BEFORE OBTAINMESSAGE");
+                    /*
                     Message readMsg = handler.obtainMessage(
                             MessageConstants.MESSAGE_READ, numBytes, -1,
                             mmBuffer);
+
+                    */
+                    Message readMsg;
+                    if(numBytes>0){
+                        readMsg = handler.obtainMessage(MessageConstants.MESSAGE_READ, numBytes, -1, Arrays.copyOf(mmBuffer,numBytes));
+                        byte[] readBuf = (byte[]) readMsg.obj;
+                        mmBufferedOutStream.write(readBuf);
+                        //mmBufferedOutStream.write(numBytes);
+                        mmBuffer.toString();
+                        Log.i(CLASSNAME, "BYTES :" + mmBuffer.toString() );
+                        Log.i(CLASSNAME, "SIZE :" + readBuf.length );
+                        //mmFileOutStream.write(numBytes);
+                        //mmFileOutStream.append(numBytes);
+                        //mmFileOutStream.close();
+                        readMsg.sendToTarget();
+
+                    }
+                    else {
+                        try {
+                            sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     Log.i(CLASSNAME, "AFTER OBTAINMESSAGE");
-                    Log.i(CLASSNAME, readMsg.toString());
+                    //Log.i(CLASSNAME, readMsg.toString());
                     // Log.i(CLASSNAME, "RECEIVING DATA : "+readMsg.obj.toString());
 
-                    byte[] readBuf = (byte[]) readMsg.obj;
+                    //byte[] readBuf = (byte[]) readMsg.obj;
 
-                    String readMessage = new String(readBuf, 0, readMsg.arg1);
-                    Log.i(CLASSNAME, "RECEIVING DATA : "+readMessage);
+                    //String readMessage = new String(readBuf, 0, readMsg.arg1);
+                    //Log.i(CLASSNAME, "RECEIVING DATA : "+readMessage);
                     // Log.i(CLASSNAME, "MESSAGE obg readMessage : "+readMessage);
 /*
                     FileOutputStream out = new FileOutputStream("video.mp4");
@@ -443,6 +470,7 @@ public class ConnectActivity extends AppCompatActivity {
                     //mmFileOutStream.write(mmBuffer);
                     // mmFileOutStream.write(readBuf);
                     //mmFileOutStream.write(readBuf);
+                    /*
                     mmBufferedOutStream.write(readBuf);
                     //mmBufferedOutStream.write(numBytes);
                     mmBuffer.toString();
@@ -452,6 +480,7 @@ public class ConnectActivity extends AppCompatActivity {
                     //mmFileOutStream.append(numBytes);
                     //mmFileOutStream.close();
                     readMsg.sendToTarget();
+                     */
                 } catch (IOException e) {
                     Log.d(CLASSNAME, "Input stream was disconnected", e);
                     break;
