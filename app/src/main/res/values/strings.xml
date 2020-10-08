@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">client</string>
 
-    <!-- activity_video -->
-    <string name="video_connected_to_text">Connected to:</string>
-
     <!-- activity_connect -->
     <string name="connect_button">Connect</string>
     <string name="connect_refresh_button">Refresh</string>
+    <string name="connect_start_video_button">Start video</string>
 </resources>

@@ -115,6 +115,7 @@ public class ConnectActivity extends AppCompatActivity {
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_spinner_item, spinnerArray);
                 Log.i(CLASSNAME,"ArrayAdapter-2");
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                connectionSelectionSpinner.setAdapter(null);
                 connectionSelectionSpinner.setAdapter(adapter);
 
                 Log.i(CLASSNAME, "Discovery Monitor - Discovery Finished");
@@ -284,8 +285,9 @@ public class ConnectActivity extends AppCompatActivity {
         thread.run();
 
         //Log.i(name);
+    }
 
-
+    public void onClickEventStartVideoButton(View view){
         Intent launchActivityVideo = new Intent(ConnectActivity.this, VideoActivity.class);
         //launchActivityVideo.putExtras(launchActivityVideo);
         //launchActivityVideo.putExtras(newBundle);
